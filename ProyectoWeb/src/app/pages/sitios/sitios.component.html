@@ -1,0 +1,13 @@
+<div class="modal-backdrop" *ngIf="modalAbierto">
+    <div class="modal">
+      <h3>Nuevo Sitio</h3>
+      <label for="nombre-sitio">Nombre del Sitio:</label>
+      <input id="nombre-sitio" type="text" [(ngModel)]="nuevoSitio.nombre" />
+  
+      <div class="modal-buttons">
+        <button (click)="guardarSitio()">Guardar</button>
+        <button (click)="cerrarModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  

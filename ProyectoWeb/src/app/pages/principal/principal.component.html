@@ -1,0 +1,74 @@
+principal html:
+<div class="header">
+  <h1>Proyecto Web</h1>
+  <p>Administra tu lista de compras de manera sencilla y rápida.</p>
+  <!-- Botón de logout -->
+  <button *ngIf="auth.isAuthenticated$ | async" (click)="logout()" class="logout-button">
+    Logout
+  </button>
+</div>
+
+<div *ngIf="auth.isAuthenticated$ | async; else notAuthenticated" class="container">
+  <h2>Lista de Compras</h2>
+
+  <!-- Barra de búsqueda -->
+  <input
+    type="text"
+    placeholder="Buscar producto..."
+    [(ngModel)]="searchTerm"
+    (input)="buscarProducto()"
+    class="search-bar"
+  />
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Sitio</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of filteredListaCompras">
+        <td class="producto-cell">
+          <input *ngIf="productoEditando?.id_producto === item.id_producto" type="text" [(ngModel)]="productoEditando.nombre_producto" />
+          <span *ngIf="productoEditando?.id_producto !== item.id_producto">{{ item.nombre_producto }}</span>
+        </td>
+        <td>
+          <input *ngIf="productoEditando?.id_producto === item.id_producto" type="text" [(ngModel)]="productoEditando.id_sitio" />
+          <span *ngIf="productoEditando?.id_producto !== item.id_producto">{{ item.id_sitio }}</span>
+        </td>
+        <td class="acciones-cell">
+          <button *ngIf="productoEditando?.id_producto !== item.id_producto" (click)="habilitarEdicion(item)">
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+          <button *ngIf="productoEditando?.id_producto === item.id_producto" (click)="cancelarEdicion()">
+            <i class="fas fa-times"></i>
+          </button>
+          <button (click)="eliminarProducto(item)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+      <!-- Fila para añadir nuevo producto -->
+      <tr *ngIf="modoCreacion">
+        <td><input type="text" placeholder="Nombre del producto" [(ngModel)]="nuevoProducto.nombre_producto" /></td>
+        <td><input type="text" placeholder="ID Sitio" [(ngModel)]="nuevoProducto.id_sitio" /></td>
+        <td class="acciones-cell">
+          <button (click)="cancelarCreacion()">Cancelar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Botón Guardar solo se muestra cuando hay un producto en edición o en creación -->
+  <div class="button-container">
+    <button class="add-button" (click)="abrirModoCreacion()">+</button>
+    <button *ngIf="productoEditando || modoCreacion" class="save-button" (click)="guardarEdicion(); productoEditando = null">Guardar</button>
+  </div>
+</div>
+
+<!-- Mensaje para usuarios no autenticados -->
+<ng-template #notAuthenticated>
+  <p>Por favor, inicia sesión para acceder a la lista de compras.</p>
+</ng-template>
